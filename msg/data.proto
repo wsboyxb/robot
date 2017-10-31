@@ -1,0 +1,19 @@
+option go_package = "msg";
+
+message HMRequest{
+    required string action = 1;
+    required string method = 2;
+    required bytes data = 3;
+    optional string callback = 4;
+    optional int32 channelId = 5;   
+}
+
+
+message HMResponse{
+    required string callback = 1;
+    required sint32 code = 2;
+    required bytes data = 3;
+    required bool isCompress = 4;
+    optional string msg = 5;    
+}
+
