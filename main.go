@@ -104,7 +104,6 @@ func main() {
 	}
 }
 func ac() {
-
 	//reg()
 	//log()
 	//fmt.Printf("%v", LoginAction.InitLogin)
