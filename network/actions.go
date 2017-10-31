@@ -3,10 +3,11 @@ package network
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+
 	"github.com/wsboyxb/robot/login"
 	"github.com/wsboyxb/robot/utils"
 	"github.com/zemirco/uid"
-	"reflect"
 )
 
 type LoginAction struct {

@@ -3,11 +3,12 @@ package login
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/google/go-querystring/query"
-	"github.com/wsboyxb/robot/conf"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/google/go-querystring/query"
+	"github.com/wsboyxb/robot/conf"
 )
 
 // sk hold sessionKey

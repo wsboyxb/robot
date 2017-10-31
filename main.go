@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/wsboyxb/robot/conf"
-	"github.com/wsboyxb/robot/login"
-	"github.com/wsboyxb/robot/network"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/wsboyxb/robot/conf"
+	"github.com/wsboyxb/robot/login"
+	"github.com/wsboyxb/robot/network"
 )
 
 type resultPair struct {

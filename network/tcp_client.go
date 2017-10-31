@@ -6,13 +6,14 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/golang/protobuf/proto"
-	log "github.com/sirupsen/logrus"
-	"github.com/wsboyxb/robot/msg"
 	"net"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/golang/protobuf/proto"
+	log "github.com/sirupsen/logrus"
+	"github.com/wsboyxb/robot/msg"
 )
 
 func init() {
