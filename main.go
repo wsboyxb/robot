@@ -9,6 +9,7 @@ import (
 	"github.com/wsboyxb/robot/conf"
 	"github.com/wsboyxb/robot/login"
 	"github.com/wsboyxb/robot/network"
+	"reflect"
 )
 
 type resultPair struct {
@@ -17,8 +18,32 @@ type resultPair struct {
 }
 
 var (
-	loginAction     network.LoginAction
-	interfaceAction network.InterfaceAction
+	loginAction             network.LoginAction
+	interfaceAction         network.InterfaceAction
+	activityAction          network.ActivityAction
+	activityGlobalPVPAction network.ActivityGlobalPVPAction
+	arenaAction             network.ArenaAction
+	autoUpLevelAction       network.AutoUpLevelAction
+	dailyActivityAction     network.DailyActivityAction
+	deviceFactoryAction     network.DeviceFactoryAction
+	drawAction              network.DrawAction
+	guildAction             network.GuildAction
+	payAction               network.PayAction
+	playerAction            network.PlayerAction
+
+	actions = []interface{}{
+		interfaceAction,
+		activityAction,
+		activityGlobalPVPAction,
+		arenaAction,
+		autoUpLevelAction,
+		dailyActivityAction,
+		deviceFactoryAction,
+		drawAction,
+		guildAction,
+		payAction,
+		playerAction,
+	}
 )
 
 func reg() {
@@ -62,7 +87,7 @@ func log() {
 	}
 }
 func gologin(sk chan<- string) {
-	cnt := 200
+	cnt := 100
 	for i := 0; i < cnt; i++ {
 		id := fmt.Sprintf("%s%d", conf.AccountPrefix, i)
 		s, err := login.Login(id)
@@ -90,12 +115,20 @@ func process(sk string) {
 		loginAction.InitLogin(client, sk)
 		time.Sleep(time.Second * 2)
 	}
+	args := []reflect.Value{reflect.ValueOf(client)}
 	for {
-		time.Sleep(15 * time.Second)
-		go interfaceAction.LoadInterface(client)
+		time.Sleep(1 * time.Second)
+		for _, act := range actions {
+
+			t := reflect.ValueOf(act)
+			for i := 0; i < t.NumMethod(); i++ {
+				go t.Method(i).Call(args)
+			}
+		}
 	}
 }
 func main() {
+	//var pa network.PlayerAction
 	sks := make(chan string, 10)
 	go gologin(sks)
 	for {
