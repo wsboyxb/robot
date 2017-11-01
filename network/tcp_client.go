@@ -18,8 +18,9 @@ import (
 
 func init() {
 	// Log as JSON instead of the default ASCII formatter.
-	f := &log.JSONFormatter{}
+	f := &log.TextFormatter{}
 	f.DisableTimestamp = true
+	f.ForceColors = true
 	log.SetFormatter(f)
 
 	// Output to stdout instead of the default stderr
@@ -103,6 +104,11 @@ func (this *TcpClient) Run() {
 		}
 
 		//log.Println(len(rs))
+		sublen := len(str)
+		if sublen > 120 {
+			sublen = 120
+		}
+		str = str[:sublen]
 		log.Printf("%d,%d,%s,[%s]", this.user.PlayerID, resp.GetCode(), resp.GetCallback(), str)
 
 		if resp.GetCallback() == "LoginAction.initLogin" {

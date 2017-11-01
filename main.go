@@ -17,7 +17,8 @@ type resultPair struct {
 }
 
 var (
-	loginAction network.LoginAction
+	loginAction     network.LoginAction
+	interfaceAction network.InterfaceAction
 )
 
 func reg() {
@@ -61,7 +62,7 @@ func log() {
 	}
 }
 func gologin(sk chan<- string) {
-	cnt := 3
+	cnt := 200
 	for i := 0; i < cnt; i++ {
 		id := fmt.Sprintf("%s%d", conf.AccountPrefix, i)
 		s, err := login.Login(id)
@@ -79,19 +80,19 @@ func process(sk string) {
 	client := network.NewTcpClient(conf.GameServerIP, conf.GameServerPort)
 	defer client.Close()
 	go client.Run()
-	var interfaceAction network.InterfaceAction
-	//for {
-	//sk, ok := <-sks
-	//if ok {
+
 	u := &network.User{
 		TcpClient:  client,
 		SessionKey: sk,
 	}
 	client.SetUser(u)
-	go loginAction.InitLogin(client, sk)
+	for client.GetUser().PlayerID == 0 {
+		loginAction.InitLogin(client, sk)
+		time.Sleep(time.Second * 2)
+	}
 	for {
-		go interfaceAction.LoadInterface(client)
 		time.Sleep(15 * time.Second)
+		go interfaceAction.LoadInterface(client)
 	}
 }
 func main() {

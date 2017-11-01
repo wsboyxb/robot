@@ -6,7 +6,7 @@ var (
 	//LoginURL       = "http://119.29.254.55:8095" //正式服
 	LoginURL = "http://192.168.1.243:8095" //正式服
 	//GameServerIP   = "139.199.157.127"
-	GameServerIP   = "192.168.1.42"
+	GameServerIP   = "192.168.1.243"
 	GameServerPort = 9097
 
 	AccountPrefix = "debug1030-"
