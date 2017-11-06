@@ -6,10 +6,11 @@ import (
 	"os/signal"
 	"time"
 
+	"reflect"
+
 	"github.com/wsboyxb/robot/conf"
 	"github.com/wsboyxb/robot/login"
 	"github.com/wsboyxb/robot/network"
-	"reflect"
 )
 
 type resultPair struct {
@@ -87,7 +88,7 @@ func log() {
 	}
 }
 func gologin(sk chan<- string) {
-	cnt := 100
+	cnt := 300
 	for i := 0; i < cnt; i++ {
 		id := fmt.Sprintf("%s%d", conf.AccountPrefix, i)
 		s, err := login.Login(id)

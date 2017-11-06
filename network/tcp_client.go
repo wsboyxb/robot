@@ -23,9 +23,23 @@ func init() {
 	f.ForceColors = true
 	log.SetFormatter(f)
 
+	now := time.Now()
+	filename := fmt.Sprintf("%d%02d%02d_%02d_%02d_%02d.log",
+		now.Year(),
+		now.Month(),
+		now.Day(),
+		now.Hour(),
+		now.Minute(),
+		now.Second())
+
+	file, err := os.Create(filename)
+	if err != nil {
+		panic(err)
+	}
 	// Output to stdout instead of the default stderr
 	// Can be any io.Writer, see below for File example
-	log.SetOutput(os.Stdout)
+	//log.SetOutput(os.Stdout)
+	log.SetOutput(file)
 
 	// Only log the warning severity or above.
 	log.SetLevel(log.DebugLevel)
