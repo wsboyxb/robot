@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"reflect"
 
+	"math/rand"
+	"time"
+
+	log "github.com/sirupsen/logrus"
 	"github.com/wsboyxb/robot/login"
 	"github.com/wsboyxb/robot/utils"
 	"github.com/zemirco/uid"
-	"math/rand"
-	"time"
 )
 
 func init() {
@@ -76,12 +78,13 @@ func (la LoginAction) InitLoginCB(c *TcpClient, data []byte) {
 	var vo initLogin
 	err := json.Unmarshal(data, &vo)
 	if err != nil {
-		fmt.Println(err)
+		log.Errorln("InitLoginCB", err)
 		return
 	}
 
 	if vo.PlayerID == 0 {
 		la.CreatePlayer(c, c.GetUser().SessionKey)
+		log.Errorf("InitLoginCB %+v", vo)
 		return
 	}
 	c.GetUser().PlayerID = vo.PlayerID
@@ -297,6 +300,15 @@ func (act GuildAction) OpenGuild(c *TcpClient) error {
 	a := reflect.TypeOf(act).Name()
 	m := "openGuild"
 	return innerSendNoData(c, a, m)
+}
+
+func (act GuildAction) ApplyGuild(c *TcpClient) error {
+	a := reflect.TypeOf(act).Name()
+	m := "applyGuild"
+	d := struct {
+		GuildID int `json:"guildId"`
+	}{1}
+	return innerSend(c, a, m, d)
 }
 
 func (act GuildAction) OpenGuildInfo(c *TcpClient) error {

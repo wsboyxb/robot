@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -8,6 +9,7 @@ import (
 
 	"reflect"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/wsboyxb/robot/conf"
 	"github.com/wsboyxb/robot/login"
 	"github.com/wsboyxb/robot/network"
@@ -45,10 +47,12 @@ var (
 		payAction,
 		playerAction,
 	}
+
+	begin = flag.Int("b", 0, "begin user id")
 )
 
 func reg() {
-	cnt := 500
+	cnt := 2000
 	r := make(chan resultPair, cnt)
 	for i := 0; i < cnt; i++ {
 		go func(i int) {
@@ -58,7 +62,7 @@ func reg() {
 				login.Register(id),
 			}
 		}(i)
-		time.Sleep(10 * time.Microsecond)
+		time.Sleep(100 * time.Microsecond)
 	}
 
 	for i := 0; i < cnt; i++ {
@@ -66,7 +70,7 @@ func reg() {
 		fmt.Printf("%d,%v\n", v.idx, v.err)
 	}
 }
-func log() {
+func lo11g() {
 	cnt := 50
 	r := make(chan resultPair, cnt)
 	for i := 0; i < cnt; i++ {
@@ -88,12 +92,14 @@ func log() {
 	}
 }
 func gologin(sk chan<- string) {
-	cnt := 300
+	cnt := 500
 	for i := 0; i < cnt; i++ {
-		id := fmt.Sprintf("%s%d", conf.AccountPrefix, i)
+		id := fmt.Sprintf("%s%d", conf.AccountPrefix, i+*begin)
 		s, err := login.Login(id)
 		if err == nil {
 			sk <- s
+		} else {
+			log.Errorln("login account err", err)
 		}
 		time.Sleep(10 * time.Microsecond)
 	}
@@ -118,26 +124,40 @@ func process(sk string) {
 	}
 	args := []reflect.Value{reflect.ValueOf(client)}
 	for {
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second)
 		for _, act := range actions {
 
 			t := reflect.ValueOf(act)
 			for i := 0; i < t.NumMethod(); i++ {
+				time.Sleep(1 * time.Second)
 				go t.Method(i).Call(args)
 			}
 		}
 	}
 }
 func main() {
+	flag.Parse()
+	//reg()
 	//var pa network.PlayerAction
-	sks := make(chan string, 10)
+	sks := make(chan string, 100)
 	go gologin(sks)
+	var i int
 	for {
+		time.Sleep(500 * time.Microsecond)
 		sk, ok := <-sks
 		if ok {
+			i++
 			go process(sk)
 		}
+		if i >= 500 {
+			break
+		}
+		log.Infoln(i)
 	}
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, os.Kill)
+	sig := <-c
+	log.Infof("Leaf closing down (signal: %v)", sig)
 }
 func ac() {
 	//reg()

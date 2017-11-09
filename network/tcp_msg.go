@@ -3,6 +3,7 @@ package network
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -41,8 +42,8 @@ func (p *MsgParser) Read(c *TcpClient) ([]byte, error) {
 	msgLen = binary.BigEndian.Uint32(bufMsgLen)
 
 	// check len
-	if msgLen > 8*1024 {
-		return nil, errors.New("message too long")
+	if msgLen > 16*1024 {
+		return nil, errors.New(fmt.Sprintf("message too long %d", msgLen))
 	} else if msgLen < 4 {
 		return nil, errors.New("message too short")
 	}

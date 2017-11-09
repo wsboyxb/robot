@@ -42,7 +42,7 @@ func init() {
 	log.SetOutput(file)
 
 	// Only log the warning severity or above.
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.ErrorLevel)
 }
 
 type TcpClient struct {
@@ -123,7 +123,12 @@ func (this *TcpClient) Run() {
 			sublen = 120
 		}
 		str = str[:sublen]
-		log.Printf("%d,%d,%s,[%s]", this.user.PlayerID, resp.GetCode(), resp.GetCallback(), str)
+		if resp.GetCode() == 1 {
+			log.Debugf("%d,%d,%s,[%s]", this.user.PlayerID, resp.GetCode(), resp.GetCallback(), str)
+		} else {
+			log.Errorf("%d,%d,%s,[%s]", this.user.PlayerID, resp.GetCode(), resp.GetCallback(), str)
+		}
+		//log.Printf()
 
 		if resp.GetCallback() == "LoginAction.initLogin" {
 			var la LoginAction
@@ -131,6 +136,12 @@ func (this *TcpClient) Run() {
 		} else if resp.GetCallback() == "LoginAction.createPlayer" {
 			var la LoginAction
 			la.CreatePlayerCB(this, resp.GetData())
+		} else if resp.GetCallback() == "LoginAction.loadPlayer" {
+			if resp.GetCode() == 1 {
+				log.Printf("LoadPlayer success %d,%s", this.user.PlayerID, str)
+			} else {
+				log.Errorf("LoadPlayer error %d", this.user.PlayerID)
+			}
 		}
 	}
 }
